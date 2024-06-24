@@ -1,6 +1,6 @@
 services:
 
-  laravel-docker-app:
+  laravel-docker:
     container_name: laravel-docker-app
     build: .
     volumes:
