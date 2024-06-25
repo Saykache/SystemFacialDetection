@@ -17,15 +17,12 @@
         </div>
 
         <!-- CPF / CNPJ -->
-        <div class="mt-4">
-            <x-input-label for="cpfCnpj" :value="__('CPF / CNPJ')" />
+        <div class="mt-4" x-data>
+            <x-input-label for="cpf_cnpj" :value="__('CPF / CNPJ')" />
 
-            <x-text-input id="cpfCnpj" class="block mt-1 w-full"
-                            type="text"
-                            name="cpfCnpj"
-                            required autocomplete="new-cpfCnpj" />
+            <x-text-input id="cpf_cnpj" class="block mt-1 w-full mt-2" type="text" name="cpf_cnpj"  x-mask="999.999.999-99" placeholder="999.999.999-99" required  autocomplete="new-cpf_cnpj" />
 
-            <x-input-error :messages="$errors->get('cpfCnpj')" class="mt-2" />
+            <x-input-error :messages="$errors->get('cpf_cnpj')" class="mt-2"/>
         </div>
 
         <!-- Password -->
