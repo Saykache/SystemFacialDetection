@@ -16,6 +16,18 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
+        <!-- CPF / CNPJ -->
+        <div class="mt-4">
+            <x-input-label for="cpfCnpj" :value="__('CPF / CNPJ')" />
+
+            <x-text-input id="cpfCnpj" class="block mt-1 w-full"
+                            type="text"
+                            name="cpfCnpj"
+                            required autocomplete="new-cpfCnpj" />
+
+            <x-input-error :messages="$errors->get('cpfCnpj')" class="mt-2" />
+        </div>
+
         <!-- Password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
