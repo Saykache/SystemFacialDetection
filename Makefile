@@ -4,8 +4,9 @@ setup:
 	@make up
 	@make composer-update
 	@enable-laravel-storage
-	@make data
-	@make permission-user
+
+# @make data
+# @make permission-user
 
 
 # Comandos para incialização correta do projeto
@@ -18,8 +19,8 @@ rebuild-up:
 up:
 	sudo docker compose up -d
 
-laravel-new-project:
-	sudo docker container exec laravel-docker-app bash -c "composer create-project laravel/laravel ."
+# laravel-new-project:
+# 	sudo docker container exec laravel-docker-app bash -c "composer create-project laravel/laravel ."
 
 composer-update:
 	sudo docker container exec laravel-docker-app bash -c "composer update"
@@ -33,16 +34,18 @@ permission-super-user:
 
 # Ativar Laravel Fazer tudo na sequência (1)
 enable-laravel-storage:
-	cd laravel-docker/storage && \
+	cd storage/ && \
 	mkdir -pv framework/views app/ framework/sessions framework/cache && \
 	cd .. && \
-	sudo chmod 777 -R storage && \
+	sudo chmod 775 -R storage && \
 	sudo chown -R www-data:www-data storage
 
 
 # Migrations e Seeds Fazer tudo na sequência (2)
-data:
+laravel-migrate:
 	sudo docker container exec laravel-docker-app bash -c "php artisan migrate"
+
+laravel-seed:
 	sudo docker container exec laravel-docker-app bash -c "php artisan db:seed"
 
 
@@ -78,23 +81,20 @@ container-permission-user:
 
 
 # Testes
-add-column-fotos:
-	sudo docker container exec laravel-docker-app bash -c "php artisan make:migration add_photo_to_users_table --table=users"
-	@make permission-user
+# add-column-fotos:
+# 	sudo docker container exec laravel-docker-app bash -c "php artisan make:migration add_photo_to_users_table --table=users"
+# 	@make permission-user
 
-add-table:
-	sudo docker container exec laravel-docker-app bash -c "php artisan make:model NomeDoModel -m"
-	@make permission-user
+# add-table:
+# 	sudo docker container exec laravel-docker-app bash -c "php artisan make:model NomeDoModel -m"
+# 	@make permission-user
 
-laravel-migrate:
-	sudo docker container exec laravel-docker-app bash -c "php artisan migrate"
+# user-controller:
+# 	sudo docker container exec laravel-docker-app bash -c "php artisan make:controller UserController -r"
+# 	@make permission-user
 
-user-controller:
-	sudo docker container exec laravel-docker-app bash -c "php artisan make:controller UserController -r"
-	@make permission-user
-
-artisan-server:
-	sudo docker container exec laravel-docker-app bash -c  "php artisan serve --port=9000"
+# artisan-server:
+# 	sudo docker container exec laravel-docker-app bash -c  "php artisan serve --port=9000"
 
 login-system-create:
 	sudo docker container exec laravel-docker-app bash -c "php artisan make:auth"
