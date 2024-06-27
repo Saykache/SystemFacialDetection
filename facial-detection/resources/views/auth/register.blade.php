@@ -88,4 +88,11 @@
             });
         </script>
     @endpush
+    @push('css')
+        <style>
+            a {
+                text-decoration: none !important;
+            }
+        </style>
+    @endpush
 </x-guest-layout>

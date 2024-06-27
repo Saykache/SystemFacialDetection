@@ -14,4 +14,11 @@
             </div>
         </div>
     </div>
+    @push('css')
+        <style>
+            a {
+                text-decoration: none !important;
+            }
+        </style>
+    @endpush
 </x-app-layout>

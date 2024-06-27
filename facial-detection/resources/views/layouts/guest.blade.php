@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="{{ asset('assets/dist/css/bootstrap.min.css') }}">
         {{-- Jquery --}}
         <script src="{{ asset('assets/js/jquery.js') }}"></script>
+        @stack('css')
     </head>
     <body class="font-sans text-gray-900 antialiased">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
