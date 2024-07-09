@@ -112,3 +112,9 @@ npm-install:
 
 npm-run-build:
 	sudo docker container exec laravel-docker-app bash -c "npm run build"
+
+database-permission-user:
+	sudo docker container exec laravel-docker-app bash -c "chown -R 1000:1000 ./database/*"
+
+app-permission-user:
+	sudo docker container exec laravel-docker-app bash -c "chown -R 1000:1000 ./app/*"
