@@ -13,8 +13,8 @@ class UserRegistry extends Model
     protected $fillable = [
         'nome', 
         'cpf', 
-        'password', 
         'email', 
+        'phone',
         'telefone', 
         'user_id'
     ];
