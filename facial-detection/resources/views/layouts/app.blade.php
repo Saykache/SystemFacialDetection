@@ -35,6 +35,7 @@
             </main>
         </div>
 
+        <script src="{{ asset('assets/dist/js/bootstrap.min.js') }}"></script>
         @stack('js')
     </body>
 </html>
