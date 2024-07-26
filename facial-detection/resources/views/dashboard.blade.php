@@ -43,8 +43,8 @@
                                         <div class="my-4">
                                             <div class="container">
                                                 <div class="row justify-content-center">
-                                                    <video class="col-12" id="stream" width="320" height="240"></video>
-                                                    <canvas class="col-12" id="capture" width="320" height="240"></canvas>
+                                                    <video class="col-12" id="stream" width="640" height="480"></video>
+                                                    <canvas class="col-12" id="capture" width="640" height="480"></canvas>
                                                 </div>
                                                 <div class="row justify-content-center" id="snapshot"></div>
                                             </div>
