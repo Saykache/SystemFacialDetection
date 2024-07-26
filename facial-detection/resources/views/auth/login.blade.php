@@ -44,4 +44,11 @@
             </x-primary-button>
         </div>
     </form>
+    @push('css')
+        <style>
+            a {
+                text-decoration: none !important;
+            }
+        </style>
+    @endpush
 </x-guest-layout>

@@ -1,0 +1,46 @@
+services:
+
+  laravel-docker:
+    container_name: laravel-docker-app
+    build: .
+    volumes:
+      - ./facial-detection:/var/www/html
+    ports:
+      - 80:80
+
+  mysql_db:
+    image: mysql:8.0
+    container_name: laravel-docker-mysql
+    env_file: .env
+    command: mysqld --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - '3306:3306'
+    volumes:
+      - './DB/mysql:/var/lib/mysql'
+      - './DB/my.cnf:/etc/mysql/conf.d/my.cnf'
+      - './DB/entrypoint-initdb.d:/docker-entrypoint-initdb.d'
+
+  phpmyadmin:
+    container_name: laravel-docker-phpmyadmin
+    image: phpmyadmin:5.2.1
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+
+  python-facial-detection:
+    container_name: python-facial-detection
+    build:
+      context: ./python
+    volumes:
+      - ./python:/app
+    working_dir: /app
+    command: bash -c "python main.py && tail -f /dev/null"
+    restart: always
+    depends_on:
+      - mysql_db
