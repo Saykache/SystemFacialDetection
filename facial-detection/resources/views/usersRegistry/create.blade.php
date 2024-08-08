@@ -51,6 +51,12 @@
                                 <x-input-error :messages="$errors->get('phone')" class="mt-2" />
                             </div>
 
+                            <div class="col col-12 mt-4">
+                                <!-- Photo -->
+                                <x-input-label for="photo" :value="__('Photo')" />
+                                <x-text-input id="photo" class="block mt-2 w-full" type="file" name="photo" value="{{ old('photo') }}"  autocomplete="photo" />
+                                <x-input-error :messages="$errors->get('photo')" class="mt-2" />
+                            </div>
 
                             <div class="col col-6 mt-5">
                                 <x-primary-button>

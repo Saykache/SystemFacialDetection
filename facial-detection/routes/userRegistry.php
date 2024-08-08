@@ -19,4 +19,5 @@ Route::prefix('user-registry')->middleware('auth')->group(function () {
     Route::delete('destroy', [UserRegistryController::class, 'destroy'])->name('user-registry.destroy'); // Deletar
     
     // Adicione mais rotas conforme necessário
+    Route::post('checkUser',  [UserRegistryController::class, 'checkFaceUserRegistry'])->name('user-registry.checkUser');
 });

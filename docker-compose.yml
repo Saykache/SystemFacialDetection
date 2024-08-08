@@ -2,11 +2,14 @@ services:
 
   laravel-docker:
     container_name: laravel-docker-app
-    build: .
+    build: ./facial-detection
     volumes:
       - ./facial-detection:/var/www/html
+      - ./fotos:/var/www/html/fotos
     ports:
       - 80:80
+    networks:
+      - microsservice-verification-facial-detection
 
   mysql_db:
     image: mysql:8.0
@@ -24,6 +27,8 @@ services:
       - './DB/mysql:/var/lib/mysql'
       - './DB/my.cnf:/etc/mysql/conf.d/my.cnf'
       - './DB/entrypoint-initdb.d:/docker-entrypoint-initdb.d'
+    networks:
+      - microsservice-verification-facial-detection
 
   phpmyadmin:
     container_name: laravel-docker-phpmyadmin
@@ -32,15 +37,26 @@ services:
       - 8080:80
     environment:
       - PMA_ARBITRARY=1
+    networks:
+      - microsservice-verification-facial-detection
 
   python-facial-detection:
     container_name: python-facial-detection
+    networks:
+      - microsservice-verification-facial-detection
     build:
       context: ./python
     volumes:
       - ./python:/app
+      - ./fotos:/app/fotos
     working_dir: /app
-    command: bash -c "python main.py && tail -f /dev/null"
+    command: bash -c "python main.py"
     restart: always
+    ports:
+      - 8000:8000
     depends_on:
       - mysql_db
+
+networks:
+  microsservice-verification-facial-detection:
+    driver: bridge

@@ -1,30 +1,66 @@
-import face_recognition
+from flask import Flask, request, jsonify
+import base64
+from io import BytesIO
+from PIL import Image, ImageChops
+import io
 
-def compare_faces(image1_path, image2_path):
-    # Carregar as imagens
-    image1 = face_recognition.load_image_file(image1_path)
-    image2 = face_recognition.load_image_file(image2_path)
-    
-    # Obter os encodings faciais das imagens
-    image1_encodings = face_recognition.face_encodings(image1)
-    image2_encodings = face_recognition.face_encodings(image2)
-    
-    # Verificar se ambas as imagens contêm pelo menos um rosto
-    if len(image1_encodings) == 0 or len(image2_encodings) == 0:
-        return False, "Uma ou ambas as imagens não contêm nenhum rosto."
-    
-    # Comparar os rostos
-    matches = face_recognition.compare_faces([image1_encodings[0]], image2_encodings[0])
-    
-    return matches[0]
+app = Flask(__name__)
 
-# Exemplo de uso:
-image1_path = './images/fotologin.jpeg'
-image2_path = './images/fotomarcela.jpeg'
+# Decodifica as imagens base64 para formato de imagem
+def decode_base64_to_image(base64_string):
+    if not base64_string:
+        return None
+    try:
+        image_data = base64.b64decode(base64_string)
+        image = Image.open(io.BytesIO(image_data))
+        return image
+    except Exception as e:
+        print(f"Erro ao decodificar a imagem: {e}")
+        return None
 
-is_same_person = compare_faces(image1_path, image2_path)
+# Vai comparar as imagens
+def compare_images(img1_path, img2_path):
+    # Carregar as imagens dos caminhos fornecidos
+    img1 = Image.open(img1_path)
+    img2 = Image.open(img2_path)
 
-if is_same_person:
-    print("A pessoa na foto 1 é a mesma pessoa na foto 2.")
-else:
-    print("A pessoa na foto 1 não é a mesma pessoa na foto 2.")
+    # Verificar se as imagens foram carregadas corretamente
+    if img1 is None or img2 is None:
+        raise ValueError("Uma ou ambas as imagens não foram carregadas corretamente.")
+
+    # Calcular a diferença entre as imagens
+    diff = ImageChops.difference(img1, img2)
+
+    # Verificar se há diferença
+    if diff.getbbox():
+        return False  # As imagens são diferentes
+    else:
+        return True  # As imagens são iguais
+
+
+@app.route('/reconizer', methods=['POST'])
+def submit():
+    # Capturar dados do formulário
+    image1_base64 = request.form.get('imagemFormForVerify', None)
+    image2_base64 = request.form.get('myImage', None)
+    
+    # Decodificar as imagens
+    imagem1 =  decode_base64_to_image(image1_base64)
+    imagem2 =  decode_base64_to_image(image2_base64)
+
+    if not image1_base64 or not image2_base64:
+        return jsonify({'error': 'Imagens não fornecidas ou inválidas.'}), 400
+
+    sao_iguais = compare_images(imagem1, imagem2)
+
+    response_data = {
+        'image1_base64': image1_base64,
+        'image2_base64': image2_base64,
+        'sao_iguais': sao_iguais
+        # 'marcos': '123 ok',
+    }
+    return jsonify(response_data)
+
+
+if __name__ == '__main__':
+    app.run(debug=False, host='0.0.0.0', port=8000)

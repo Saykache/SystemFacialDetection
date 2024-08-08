@@ -10,19 +10,26 @@
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 <div class="container text-center max-w-x">
 
-                    <form class="row justify-content-center" method="POST" action="{{ route('dashboard') }}">
+                    <form class="row justify-content-center" method="POST" action="{{ route('user-registry.checkUser') }}">
                         @csrf
-                        <div class="row justify-content-center my-4 py-4" id="user-image-preview">
+                        <div class="row justify-content-center py-3" id="user-image-preview">
                             <svg class="bd-placeholder-img figure-img img-fluid rounded" width="400" height="300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 400x300" preserveAspectRatio="xMidYMid slice" focusable="false">
                                 <title>Placeholder</title>
                                 <rect width="100%" height="100%" fill="#868e96"></rect>
                                 <text x="50%" y="50%" fill="#dee2e6" dy=".3em">400x300</text>
                             </svg>
                         </div>
+                        <div class="row justify-content-center">
+                            <div class="col col-6">
+                                <input type="submit" value="Reconhecer" class="col col-6 btn btn-warning">
+                            </div>
+                        </div>
+
+                        {{-- Imagem --}}
                         <input type="hidden" id="imageData" name="imageData">
                     </form>
 
-                    <div class="modal-container">
+                    <div class="modal-container mt-4">
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop" id="btn-capture-facial">
                             Tirar foto para reconhecimento facial
@@ -164,10 +171,16 @@
                         $("#btn-restart").hide();
                         $("#stream").show();
 
-                        $("#inputGroupFile").prop('value', 'data:image/png;base64,' + foto);
+                        if(foto)
+                            $("#imageData").val(foto);
+                        else
+                            $('#imageData').val('');
+
                         document.querySelector('#user-image-preview').innerHTML = '';
-                        document.querySelector('#user-image-preview').appendChild(img);
-                    })
+
+                        if(img)
+                            document.querySelector('#user-image-preview').appendChild(img);
+                    });
 
                     // Se o botão de tirar foto for pressionado
                     $("#btn-capture").on('click', function() {
