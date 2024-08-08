@@ -125,4 +125,78 @@ class UserRegistryController extends Controller
 
         return redirect()->route('user-registry.index', compact('users'))->with('delete', 'Usuário deletado com sucesso!');
     }
+
+
+    public function checkFaceUserRegistry(Request $request) {
+        $url = "http://python-facial-detection:8000/reconizer";
+        
+        // Pega a imagem
+            // Converte a imagem para base64
+            $imagemBase64 = $this->imagemParaBase64(resource_path('css/imagem1.jpeg'));
+
+        // A imagem chega chega em base64 formato png
+        // dd($request->all());
+
+        // Dados do formulário
+        // Em base64
+        $postData = [
+            'imagemFormForVerify' => $request->input('imageData'),
+            'myImage'             => $imagemBase64
+        ];
+
+        // Inicializar cURL
+        $ch = curl_init();
+
+        // Configurar opções do cURL
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+
+
+            // Executar a requisição cURL e obter a resposta
+            $response = curl_exec($ch);
+
+            // Verificar se houve erros na requisição
+            if (curl_errno($ch)) {
+                echo 'Erro no cURL: ' . curl_error($ch);
+                curl_close($ch);
+                die();
+            }
+
+            // Fechar a sessão cURL
+            curl_close($ch);
+
+        // Decodificar o JSON da resposta
+        $data = json_decode($response, true);
+        dd($data);
+
+        // Se conseguiu identificar o rosto
+        // Se não conseguiu identificar o rosto
+
+
+            // // Verificar se a decodificação foi bem-sucedida
+            // if ($data === NULL) {
+            //     die('Erro ao decodificar JSON');
+            // }
+
+        // Fazer algo com os dados decodificados
+    }
+
+    private function imagemParaBase64($caminhoImagem) {
+        // Verifica se o arquivo existe
+        if (file_exists($caminhoImagem)) {
+            // Lê o conteúdo do arquivo de imagem
+            $imagemDados = file_get_contents($caminhoImagem);
+    
+            // Converte o conteúdo da imagem para base64
+            $imagemBase64 = 'data:image/jpeg;base64,' . base64_encode($imagemDados);
+    
+            // Retorna a string base64 da imagem
+            return $imagemBase64;
+        } else {
+            return false; // Retorna falso se o arquivo não existir
+        }
+    }
 }

@@ -172,7 +172,7 @@
                         $("#stream").show();
 
                         if(foto)
-                            $("#imageData").val('data:image/png;base64,' + foto);
+                            $("#imageData").val(foto);
                         else
                             $('#imageData').val('');
 
