@@ -5,7 +5,7 @@ services:
     build: ./facial-detection
     volumes:
       - ./facial-detection:/var/www/html
-      - ./fotos:/var/www/html/fotos
+      - fotos:/var/www/html/fotos
     ports:
       - 80:80
     networks:
@@ -48,7 +48,7 @@ services:
       context: ./python
     volumes:
       - ./python:/app
-      - ./fotos:/app/fotos
+      - fotos:/app/fotos
     working_dir: /app
     command: bash -c "python main.py"
     restart: always
@@ -56,6 +56,10 @@ services:
       - 8000:8000
     depends_on:
       - mysql_db
+
+
+volumes:
+  fotos:
 
 networks:
   microsservice-verification-facial-detection:
