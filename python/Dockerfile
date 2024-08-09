@@ -19,7 +19,7 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Instale a biblioteca face_recognition e suas dependências
-RUN pip install --no-cache-dir dlib face_recognition
+RUN pip install --no-cache-dir dlib face_recognition flask
 
 COPY . .
 

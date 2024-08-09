@@ -123,4 +123,7 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'path_fotos'       => '/var/www/html/fotos',
+    'path_cache_photos' => '/var/www/html/fotos/cache',
+
 ];
