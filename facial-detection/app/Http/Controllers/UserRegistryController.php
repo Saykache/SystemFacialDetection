@@ -129,30 +129,35 @@ class UserRegistryController extends Controller
 
     public function checkFaceUserRegistry(Request $request) {
         $url = "http://python-facial-detection:8000/reconizer";
+
+        // Valida se a imagem foi enviada
+        request()->validate([
+            'imageData' => ['required'],
+        ]);
         
-        // Pega a imagem
-            // Converte a imagem para base64
-            $imagemBase64 = $this->imagemParaBase64(resource_path('css/imagem1.jpeg'));
+        // Salva a imagem em base64 no volume docker
+            $nomeImagem    = time() . 'userform' . '.png';
+            $caminhoImagem = config('app.path_cache_photos') . '/' .auth()->user()->id . '/';
+            $imageData     = $request->input('imageData');
+            // Salva a imagem no volume compartilhado
+            $this->salvarImagem($imageData, $caminhoImagem, $nomeImagem);
 
-        // A imagem chega chega em base64 formato png
-        // dd($request->all());
 
-        // Dados do formulário
-        // Em base64
+        // Dados do formulário para o python
         $postData = [
-            'imagemFormForVerify' => $request->input('imageData'),
-            'myImage'             => $imagemBase64
+            'caminho_da_imagem_cache' => '/app/fotos/cache/'.auth()->user()->id . '/' . $nomeImagem,
+            'pasta_fotos_user'        => '/app/fotos/cache/'.auth()->user()->id . '/'  // Tirar a pasta de cache e colocar a pasta principal
         ];
 
-        // Inicializar cURL
-        $ch = curl_init();
+            // Inicializar cURL
+            $ch = curl_init();
 
-        // Configurar opções do cURL
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+            // Configurar opções do cURL
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
 
 
             // Executar a requisição cURL e obter a resposta
@@ -184,19 +189,33 @@ class UserRegistryController extends Controller
         // Fazer algo com os dados decodificados
     }
 
-    private function imagemParaBase64($caminhoImagem) {
-        // Verifica se o arquivo existe
-        if (file_exists($caminhoImagem)) {
-            // Lê o conteúdo do arquivo de imagem
-            $imagemDados = file_get_contents($caminhoImagem);
-    
-            // Converte o conteúdo da imagem para base64
-            $imagemBase64 = 'data:image/jpeg;base64,' . base64_encode($imagemDados);
-    
-            // Retorna a string base64 da imagem
-            return $imagemBase64;
-        } else {
-            return false; // Retorna falso se o arquivo não existir
+    private function salvarImagem($base64String, $caminhoImagem, $nomeImagem){
+        // Remover o prefixo "data:image/png;base64," da string base64
+        $base64String = preg_replace('#^data:image/\w+;base64,#i', '', $base64String);
+        
+        // Decodificar a string base64
+        $imageData = base64_decode($base64String);
+        
+        // Verifique se a string foi decodificada corretamente
+        if ($imageData === false) {
+            die('Erro ao decodificar a string base64');
         }
+
+        // Verifique se o diretório existe e crie se necessário
+        if (!is_dir($caminhoImagem)) {
+            if (!mkdir($caminhoImagem, 0777, true)) {
+                die('Falha ao criar diretório');
+            }
+        }
+        // dd($caminhoImagem);
+
+        // Salve a imagem como um arquivo PNG no volume Docker
+        if (file_put_contents($caminhoImagem.$nomeImagem, $imageData)) {
+            echo "Imagem salva com sucesso em $caminhoImagem.$nomeImagem";
+        } else {
+            echo "Erro ao salvar a imagem";
+        }
+        // dd($caminhoImagem, $nomeImagem);
+
     }
 }
